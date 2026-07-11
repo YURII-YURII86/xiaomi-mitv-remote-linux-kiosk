@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xiaomi MiTV Remote Kiosk Demo</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #111827; color: #f9fafb; font: 20px/1.5 system-ui, sans-serif; }
+    main { width: min(820px, 90vw); padding: 32px; border: 1px solid #374151; border-radius: 24px; background: #1f2937; box-shadow: 0 20px 80px rgba(0,0,0,.35); }
+    h1 { margin-top: 0; font-size: 34px; }
+    code { background: #030712; padding: 2px 8px; border-radius: 8px; }
+    .action { margin-top: 24px; padding: 24px; border-radius: 18px; background: #111827; font-size: 42px; font-weight: 800; }
+    .muted { color: #9ca3af; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Xiaomi MiTV Remote Kiosk Demo</h1>
+    <p class="muted">Run <code>xiaomi-mitv-remote-input</code>, then open this file in a browser. The page polls <code>http://127.0.0.1:8793/action</code>.</p>
+    <div class="action" id="action">waiting…</div>
+    <p id="meta" class="muted">seq: 0</p>
+  </main>
+  <script>
+    let seq = 0;
+    const actionEl = document.getElementById('action');
+    const metaEl = document.getElementById('meta');
+
+    async function pollRemote() {
+      try {
+        const res = await fetch(`http://127.0.0.1:8793/action?since=${seq}&timeout=15`, { cache: 'no-store' });
+        const data = await res.json();
+        if (data.ok && data.seq > seq) {
+          seq = data.seq;
+          const payload = data.payload || {};
+          actionEl.textContent = payload.action || 'unknown';
+          metaEl.textContent = `seq: ${seq} · ${payload.ts || ''}`;
+        }
+      } catch (err) {
+        actionEl.textContent = 'daemon offline';
+        metaEl.textContent = String(err);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+      pollRemote();
+    }
+    pollRemote();
+  </script>
+</body>
+</html>

@@ -1,55 +1,131 @@
 # Xiaomi MiTV Remote SDK for Linux Kiosks
 
-A small, dependency-free Python SDK/toolkit that turns a Xiaomi MiTV / Android TV Bluetooth remote into safe input events for a local Linux kiosk or TV dashboard.
+[![CI](https://github.com/YURII-YURII86/xiaomi-mitv-remote-linux-kiosk/actions/workflows/ci.yml/badge.svg)](https://github.com/YURII-YURII86/xiaomi-mitv-remote-linux-kiosk/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](pyproject.toml)
 
-It was written and tested around a Xiaomi/MiTV-style Bluetooth remote, but the core is generic Linux HID input handling: other Bluetooth remotes can work if they expose EV_KEY events and have a keymap.
+Use a physical Xiaomi MiTV / Android TV Bluetooth remote as a first-class controller for a Linux kiosk, local dashboard, browser app, signage screen, or appliance UI.
 
+This is not an Android TV remote-control client. It does **not** use ADB and it does **not** require Android TV. It reads the remote as a Linux HID input device and turns button presses into app-friendly actions.
+
+```text
+Xiaomi / MiTV Bluetooth remote
+        ↓
+Linux /dev/input/event*
+        ↓
+EV_KEY reader + keymap + debounce + optional EVIOCGRAB
+        ↓
+JS file bridge / JSON state / localhost long-poll endpoint
+        ↓
+Firefox kiosk, Chromium kiosk, Electron, Python, Node, or any local app
+```
+
+## Why this exists
+
+Linux kiosk projects often need a real couch-friendly remote, not a keyboard, mouse, touchscreen, Android TV API, or Home Assistant automation. Xiaomi/MiTV remotes are cheap and familiar, but once paired to Linux they can appear as changing `/dev/input/eventN` devices and may send duplicate events through multiple HID interfaces.
+
+This SDK handles that boring but important glue:
+
+- finds the current input event nodes after reboot;
+- maps raw Linux key codes to semantic actions such as `up`, `center`, `back`, `home`;
+- debounces duplicate HID events;
+- optionally grabs the input device so the browser/window manager does not steal buttons;
+- exposes button presses to browser and local apps through simple files and a local HTTP endpoint;
+- exports status for health cards and diagnostics.
 
 ## Naming
 
-This project keeps Xiaomi/MiTV in the name on purpose: that is the concrete, recognizable remote family it was built for and tested with. Internally, the SDK is intentionally generic and can support other Bluetooth HID remotes through device matching and JSON keymaps.
+Xiaomi/MiTV stays in the name on purpose because that is the concrete remote family this was built around. Internally, the code is generic Linux HID handling: other Bluetooth remotes can work if they expose `EV_KEY` events and have a JSON keymap.
 
-## What it does
+## Current verification status
+
+Verified in this standalone repo:
+
+- Python syntax check for package modules.
+- Parser/unit tests for Linux input discovery and Bluetooth status parsing.
+- Example keymap JSON validation.
+- Privacy scan before publication: no private Slane paths, Tailnet names, real remote MAC, or local diagnostics are included.
+
+Not yet verified after extraction:
+
+- End-to-end hardware test with a real Xiaomi/MiTV remote using this standalone package.
+- udev non-root setup. The documented systemd examples use root, which is common for appliance-style kiosks but not ideal for every desktop.
+
+## Features
 
 - Discovers current `/dev/input/eventN` nodes from `/proc/bus/input/devices`.
-- Matches remotes by Bluetooth MAC/Uniq, device name regex, or vendor/product tokens.
+- Matches remotes by Bluetooth MAC/Uniq or device name regex.
 - Reads Linux `EV_KEY` events directly.
-- Optionally grabs devices with `EVIOCGRAB` so Firefox/Chromium/window manager do not also consume the buttons.
+- Supports optional `EVIOCGRAB` to keep Firefox/Chromium/window manager from also consuming buttons.
 - Debounces duplicate button events across multiple HID interfaces.
-- Writes a browser-friendly action bridge file such as `data/remote-action.js`.
-- Exposes a local long-poll HTTP endpoint for apps that prefer fetch/WebSocket-like polling.
-- Exports status JSON/JS for a dashboard card.
+- Writes a browser-friendly JS bridge such as `data/remote-action.js`.
+- Exposes a localhost long-poll endpoint for apps that prefer `fetch()`.
+- Exports status JSON/JS for dashboards and diagnostics.
+- Ships systemd service examples.
+- No third-party Python runtime dependencies.
 
 ## Install from source
 
 ```bash
+git clone https://github.com/YURII-YURII86/xiaomi-mitv-remote-linux-kiosk.git
+cd xiaomi-mitv-remote-linux-kiosk
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -e .
 ```
 
-No third-party Python package is required for the daemon itself.
+The install command above was tested locally before publishing. Real input access still depends on Linux permissions for `/dev/input/event*`.
 
-## Minimal keymap
+## Quick start
+
+Create a keymap from the example:
 
 ```bash
 mkdir -p data
 cp examples/mi-remote-keymap.example.json data/mi-remote-keymap.json
 ```
 
-Event node numbers in the example are placeholders. At runtime the daemon resolves by key code fallback so `/dev/input/eventN` can change after reboot.
-
-## Run in the foreground
+Run the input daemon in observe/grab mode. Replace the MAC address with your remote MAC, or leave `LKR_REMOTE_MAC` empty and rely on `LKR_DEVICE_NAME_REGEX` while testing.
 
 ```bash
 sudo \
   LKR_ROOT="$PWD" \
   LKR_REMOTE_MAC="AA:BB:CC:DD:EE:FF" \
   LKR_DEVICE_NAME_REGEX="xiaomi|mi rc|android.*remote|remote" \
-  python3 -m linux_kiosk_remote.input_daemon
+  xiaomi-mitv-remote-input
 ```
 
-Your kiosk page can include `data/remote-action.js` or poll the local endpoint:
+During debugging, set `LKR_GRAB=0` so the desktop/browser can still receive the buttons:
+
+```bash
+sudo \
+  LKR_ROOT="$PWD" \
+  LKR_GRAB=0 \
+  LKR_DEVICE_NAME_REGEX="xiaomi|mi rc|android.*remote|remote" \
+  xiaomi-mitv-remote-input
+```
+
+## Browser integration
+
+The daemon writes a JavaScript bridge file by default:
+
+```text
+data/remote-action.js
+```
+
+It contains:
+
+```js
+window.KIOSK_REMOTE_ACTION = {
+  seq: 1,
+  action: "up",
+  label: "Up",
+  source: { code: 103, code_text: "KEY_UP" },
+  ts: "2026-07-11T12:00:00"
+};
+```
+
+A static kiosk can include or reload that file, or use the localhost long-poll endpoint:
 
 ```js
 let seq = 0;
@@ -65,13 +141,28 @@ async function pollRemote() {
 pollRemote();
 ```
 
+See `examples/static-html-kiosk/index.html` for a tiny browser demo.
+
 ## Status exporter
 
+Run once:
+
 ```bash
-LKR_ROOT="$PWD" LKR_REMOTE_MAC="AA:BB:CC:DD:EE:FF" python3 -m linux_kiosk_remote.status_exporter
+LKR_ROOT="$PWD" LKR_REMOTE_MAC="AA:BB:CC:DD:EE:FF" xiaomi-mitv-remote-status
 ```
 
-Writes `data/remote-status.json` and `data/remote-status.js`.
+Run as a loop:
+
+```bash
+LKR_ROOT="$PWD" LKR_REMOTE_MAC="AA:BB:CC:DD:EE:FF" xiaomi-mitv-remote-status --loop --interval 5
+```
+
+The exporter writes:
+
+```text
+data/remote-status.json
+data/remote-status.js
+```
 
 ## Environment variables
 
@@ -82,26 +173,51 @@ Writes `data/remote-status.json` and `data/remote-status.js`.
 | `LKR_ACTION_JS` | `$LKR_ROOT/data/remote-action.js` | Browser action bridge path. |
 | `LKR_STATE_JSON` | `$LKR_ROOT/data/remote-daemon-state.json` | Daemon state file. |
 | `LKR_DEBUG_LOG` | `$LKR_ROOT/data/remote-action-debug.jsonl` | Rotating debug log. |
-| `LKR_REMOTE_MAC` | empty | Bluetooth MAC/Uniq to match. Recommended. |
-| `LKR_DEVICE_NAME_REGEX` | `xiaomi|mi rc|android.*remote|remote` | Name fallback matcher. |
+| `LKR_STATUS_JSON` | `$LKR_ROOT/data/remote-status.json` | Status JSON path. |
+| `LKR_STATUS_JS` | `$LKR_ROOT/data/remote-status.js` | Status JS path. |
+| `LKR_REMOTE_MAC` | empty | Bluetooth MAC/Uniq to match. Recommended for stable appliances. |
+| `LKR_DEVICE_NAME_REGEX` | `xiaomi\|mi rc\|android.*remote\|remote` | Name fallback matcher. |
 | `LKR_EVENT_HOST` | `127.0.0.1` | Long-poll HTTP host. |
 | `LKR_EVENT_PORT` | `8793` | Long-poll HTTP port. |
 | `LKR_JS_GLOBAL` | `KIOSK_REMOTE_ACTION` | Global variable name in action JS. |
-| `LKR_GRAB` | `1` | Use EVIOCGRAB. Set `0` to observe only. |
+| `LKR_STATUS_JS_GLOBAL` | `KIOSK_REMOTE_STATUS` | Global variable name in status JS. |
+| `LKR_GRAB` | `1` | Use `EVIOCGRAB`. Set `0` to observe only. |
 | `LKR_VOLUME_PACTL` | `0` | If `1`, volume actions call `pactl`. |
+| `LKR_NAV_DEBOUNCE_SEC` | `0.45` | Debounce for directional actions. |
+| `LKR_BUTTON_DEBOUNCE_SEC` | `0.30` | Debounce for non-directional actions. |
 
 ## Systemd
 
-See `examples/systemd/linux-kiosk-remote-input.service` and `examples/systemd/linux-kiosk-remote-status.service`.
+Example services:
 
-The input daemon usually needs root or membership/udev permissions for `/dev/input/event*`; root is simplest for kiosk appliances.
+- `examples/systemd/linux-kiosk-remote-input.service`
+- `examples/systemd/linux-kiosk-remote-status.service`
+
+The input daemon usually needs root or udev permissions for `/dev/input/event*` and `EVIOCGRAB`. Root is the simplest appliance setup; a future version should include a udev-rule guide.
+
+## Test
+
+```bash
+./scripts/smoke_test.sh
+```
+
+This runs Python syntax checks, parser/unit tests, and example keymap validation.
 
 ## Safety notes
 
-- The daemon reads local Linux input devices only; it does not open network sockets except the localhost status/action endpoint.
+- The daemon reads local Linux input devices only.
+- The only network listener is the local endpoint on `127.0.0.1` by default.
 - Do not keep Bluetooth scanning enabled forever on fragile Wi-Fi/BT chipsets. Pair interactively, then run the daemon against already-paired devices.
 - Use `LKR_GRAB=0` during debugging if you want the desktop/session to still receive remote buttons.
 - Treat captured raw logs as local diagnostics; they may contain MAC addresses or device names.
+
+## Roadmap
+
+- Hardware validation checklist for Xiaomi/MiTV remote after standalone extraction.
+- Pair/detect/generate-keymap wizard.
+- udev permissions guide for non-root operation.
+- More integration examples: Electron, Python callback, Node local app.
+- Device profiles for additional Bluetooth HID remotes.
 
 ## License
 

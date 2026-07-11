@@ -17,3 +17,9 @@ dependencies = []
 [project.scripts]
 xiaomi-mitv-remote-input = "linux_kiosk_remote.input_daemon:main"
 xiaomi-mitv-remote-status = "linux_kiosk_remote.status_exporter:main"
+
+[project.urls]
+Homepage = "https://github.com/YURII-YURII86/xiaomi-mitv-remote-linux-kiosk"
+Repository = "https://github.com/YURII-YURII86/xiaomi-mitv-remote-linux-kiosk"
+Issues = "https://github.com/YURII-YURII86/xiaomi-mitv-remote-linux-kiosk/issues"
+
