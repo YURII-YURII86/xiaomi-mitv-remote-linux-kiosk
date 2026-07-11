@@ -244,6 +244,10 @@ This runs Python syntax checks, parser/unit tests, and example keymap validation
 - Use `LKR_GRAB=0` during debugging if you want the desktop/session to still receive remote buttons.
 - Treat captured raw logs as local diagnostics; they may contain MAC addresses or device names.
 
+## Part of Linux Kiosk Stack
+
+This project is one layer of the [Linux Kiosk Stack](https://github.com/YURII-YURII86/linux-kiosk-stack): a local-first toolkit for Linux TV kiosks, dashboards, signage screens, and appliance panels.
+
 ## Roadmap
 
 - Hardware validation checklist for Xiaomi/MiTV remote after standalone extraction.
