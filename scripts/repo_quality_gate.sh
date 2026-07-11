@@ -20,29 +20,40 @@ printf 'ok\n'
 printf '\n[2/9] version consistency\n'
 python3 - <<'PY'
 import re
-import tomllib
 from pathlib import Path
-py=tomllib.loads(Path('pyproject.toml').read_text())
-project_version=py['project']['version']
+pyproject = Path('pyproject.toml').read_text()
+version_match = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.M)
+assert version_match, 'project version missing'
+project_version = version_match.group(1)
 init=Path('src/linux_kiosk_remote/__init__.py').read_text()
 match=re.search(r'__version__\s*=\s*"([^"]+)"', init)
 assert match, '__version__ missing'
 assert match.group(1) == project_version, (match.group(1), project_version)
-assert f'## {project_version}' in Path('CHANGELOG.md').read_text() or f'## [{project_version}]' in Path('CHANGELOG.md').read_text(), 'CHANGELOG missing current version section'
+changelog = Path('CHANGELOG.md').read_text()
+assert f'## {project_version}' in changelog or f'## [{project_version}]' in changelog, 'CHANGELOG missing current version section'
 print('ok', project_version)
 PY
 
 printf '\n[3/9] entry points import\n'
 PYTHONPATH=src python3 - <<'PY'
 import importlib
-import tomllib
+import re
 from pathlib import Path
-py=tomllib.loads(Path('pyproject.toml').read_text())
-for name, target in py['project']['scripts'].items():
+text = Path('pyproject.toml').read_text()
+block = re.search(r'\[project\.scripts\](.*?)(?:\n\[|\Z)', text, re.S)
+assert block, 'project.scripts missing'
+scripts = {}
+for line in block.group(1).splitlines():
+    line = line.strip()
+    if not line or line.startswith('#'):
+        continue
+    key, value = line.split('=', 1)
+    scripts[key.strip()] = value.strip().strip('"')
+for name, target in scripts.items():
     mod, func = target.split(':')
     obj = getattr(importlib.import_module(mod), func)
     assert callable(obj), (name, target)
-print('ok', len(py['project']['scripts']))
+print('ok', len(scripts))
 PY
 
 printf '\n[4/9] smoke test\n'

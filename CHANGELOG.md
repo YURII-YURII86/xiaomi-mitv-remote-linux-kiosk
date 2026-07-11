@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.7 - 2026-07-11
+
+- Fixed `scripts/repo_quality_gate.sh` to work on Python 3.10 by avoiding `tomllib`.
+- Keeps the CI matrix green across Python 3.10, 3.11, and 3.12.
+
 ## 0.2.6 - 2026-07-11
 
 - Added `scripts/repo_quality_gate.sh` for reproducible repository presentation/quality review.

@@ -1,6 +1,6 @@
 [project]
 name = "xiaomi-mitv-remote-linux-kiosk"
-version = "0.2.6"
+version = "0.2.7"
 description = "Xiaomi/MiTV Bluetooth remote SDK for Linux kiosks"
 readme = "README.md"
 requires-python = ">=3.10"
