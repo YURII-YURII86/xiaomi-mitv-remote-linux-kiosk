@@ -372,6 +372,16 @@ examples/systemd/linux-kiosk-remote-status.service
 - `docs/security.md` — security model, root/input access, localhost endpoint.
 - `docs/hardware-validation.md` — чеклист реальной проверки пульта.
 
+## Repository quality gate
+
+Проверка публикационной готовности репы одной командой:
+
+```bash
+./scripts/repo_quality_gate.sh
+```
+
+Gate проверяет entrypoints, smoke tests, двуязычный CLI help, обязательные README/docs секции, локальные Markdown-ссылки, profile/report examples и privacy/publication cleanliness.
+
 ## Тесты
 
 ```bash

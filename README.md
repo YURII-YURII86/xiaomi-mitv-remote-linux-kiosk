@@ -296,6 +296,16 @@ Example services:
 
 The input daemon usually needs root or udev permissions for `/dev/input/event*` and `EVIOCGRAB`. Root is the simplest appliance setup; a future version should include a udev-rule guide.
 
+## Repository quality gate
+
+Run the same publication-readiness checks used during repository review:
+
+```bash
+./scripts/repo_quality_gate.sh
+```
+
+The gate verifies entry points, smoke tests, bilingual CLI help, required README/docs sections, local Markdown links, profile/report examples, and privacy/publication cleanliness.
+
 ## Test
 
 ```bash
