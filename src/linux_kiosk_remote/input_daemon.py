@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import fcntl
 import json
 import os
@@ -180,6 +181,10 @@ def handle_stop(signum: int, frame: object) -> None:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="Run the Xiaomi/MiTV remote Linux input daemon.")
+    parser.add_argument("--version", action="version", version="xiaomi-mitv-remote-input 0.2.0")
+    parser.parse_args()
+
     signal.signal(signal.SIGTERM, handle_stop)
     signal.signal(signal.SIGINT, handle_stop)
     idle = {"seq": 0, "action": "idle", "label": "idle", "ts": now()}

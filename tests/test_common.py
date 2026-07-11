@@ -1,6 +1,7 @@
 import unittest
 
 from linux_kiosk_remote.common import parse_bluetooth_info, parse_controller, parse_input_devices
+from linux_kiosk_remote.keymap import build_keymap_from_codes
 
 
 class CommonParserTests(unittest.TestCase):
@@ -47,6 +48,12 @@ Pairable: yes
 Discovering: no
 ''')
         self.assertEqual(controller, {"powered": True, "discoverable": False, "pairable": True, "discovering": False})
+
+    def test_build_keymap_from_codes(self):
+        keymap = build_keymap_from_codes({"up": 103, "center": 353}, mac="AA:BB:CC:DD:EE:FF")
+        self.assertEqual(keymap["keys"]["up"]["code_text"], "KEY_UP")
+        self.assertEqual(keymap["keys"]["center"]["code_text"], "KEY_SELECT")
+        self.assertNotIn("down", keymap["keys"])
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 # Xiaomi MiTV Remote SDK for Linux Kiosks
 
+[![CI](https://github.com/YURII-YURII86/xiaomi-mitv-remote-linux-kiosk/actions/workflows/ci.yml/badge.svg)](https://github.com/YURII-YURII86/xiaomi-mitv-remote-linux-kiosk/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](pyproject.toml)
 
@@ -104,6 +105,31 @@ sudo \
   xiaomi-mitv-remote-input
 ```
 
+
+## Setup wizard
+
+Prepare a local project folder and print the exact next commands:
+
+```bash
+xiaomi-mitv-remote-setup --init-keymap --print-systemd
+```
+
+Use `--dry-run` to inspect what would be written without changing files.
+
+## Keymap capture
+
+Capture a keymap interactively from a real remote:
+
+```bash
+sudo LKR_ROOT="$PWD" LKR_GRAB=0 xiaomi-mitv-remote-capture
+```
+
+Or generate a keymap non-interactively if you already know Linux key codes:
+
+```bash
+xiaomi-mitv-remote-capture --from-codes-json '{"up":103,"down":108,"center":353}'
+```
+
 ## Browser integration
 
 The daemon writes a JavaScript bridge file by default:
@@ -185,6 +211,13 @@ data/remote-status.js
 | `LKR_NAV_DEBOUNCE_SEC` | `0.45` | Debounce for directional actions. |
 | `LKR_BUTTON_DEBOUNCE_SEC` | `0.30` | Debounce for non-directional actions. |
 
+## Documentation
+
+- `docs/api.md` — JS/JSON/HTTP contracts.
+- `docs/troubleshooting.md` — common Bluetooth/HID/kiosk issues.
+- `docs/security.md` — local security model and root/input access notes.
+- `docs/hardware-validation.md` — checklist for confirming a real remote.
+
 ## Systemd
 
 Example services:
@@ -213,7 +246,7 @@ This runs Python syntax checks, parser/unit tests, and example keymap validation
 ## Roadmap
 
 - Hardware validation checklist for Xiaomi/MiTV remote after standalone extraction.
-- Pair/detect/generate-keymap wizard.
+- More polished pair/detect/generate-keymap wizard with optional systemd installer.
 - udev permissions guide for non-root operation.
 - More integration examples: Electron, Python callback, Node local app.
 - Device profiles for additional Bluetooth HID remotes.
