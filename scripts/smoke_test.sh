@@ -57,3 +57,19 @@ keymap=json.load(open('/tmp/xiaomi-mitv-remote-smoke/lab-keymap.json'))
 assert keymap['keys']['up']['code'] == 103
 print('lab ok')
 PY
+
+PYTHONPATH=src python3 -m linux_kiosk_remote.cli help >/tmp/xiaomi-mitv-remote-smoke/cli-help-en.txt
+PYTHONPATH=src python3 -m linux_kiosk_remote.cli --lang ru help >/tmp/xiaomi-mitv-remote-smoke/cli-help-ru.txt
+XMR_LANG=ru PYTHONPATH=src python3 -m linux_kiosk_remote.cli flow >/tmp/xiaomi-mitv-remote-smoke/cli-flow-ru.txt
+PYTHONPATH=src python3 -m linux_kiosk_remote.cli profiles --json >/tmp/xiaomi-mitv-remote-smoke/cli-profiles.json
+PYTHONPATH=src LKR_ROOT=/tmp/xiaomi-mitv-remote-smoke LKR_KEYMAP=/tmp/xiaomi-mitv-remote-smoke/keymap.json LKR_GRAB=0 python3 -m linux_kiosk_remote.cli lab --from-codes-json '{"up":103,"down":108,"left":105,"right":106,"center":353,"back":158}' --output /tmp/xiaomi-mitv-remote-smoke/cli-lab-report.json
+python3 - <<'PY'
+import json
+assert 'Рекомендуемый путь' in open('/tmp/xiaomi-mitv-remote-smoke/cli-flow-ru.txt').read()
+assert 'Нативный CLI' in open('/tmp/xiaomi-mitv-remote-smoke/cli-help-ru.txt').read()
+profiles=json.load(open('/tmp/xiaomi-mitv-remote-smoke/cli-profiles.json'))
+assert any(p['id'] == 'xiaomi-mitv-remote' for p in profiles)
+report=json.load(open('/tmp/xiaomi-mitv-remote-smoke/cli-lab-report.json'))
+assert report['schema'] == 'xiaomi-mitv-remote-linux-kiosk.lab-report.v1'
+print('unified cli ok')
+PY

@@ -153,6 +153,31 @@ sudo \
   xiaomi-mitv-remote-input
 ```
 
+## Нативный двуязычный CLI
+
+Главная рекомендуемая команда:
+
+```bash
+xiaomi-remote --lang ru help
+XMR_LANG=ru xiaomi-remote flow
+xiaomi-remote --lang en help
+```
+
+Основные подкоманды:
+
+```text
+xiaomi-remote setup      # подготовить/проверить kiosk-проект
+xiaomi-remote profiles   # показать профили совместимости
+xiaomi-remote capture    # поймать кнопки и создать keymap
+xiaomi-remote lab        # validation lab + hardware report
+xiaomi-remote doctor     # redacted diagnostics report
+xiaomi-remote daemon     # запустить input daemon
+xiaomi-remote status     # экспорт статуса
+xiaomi-remote flow       # рекомендуемый путь настройки
+```
+
+Старые команды `xiaomi-mitv-remote-*` остаются для совместимости.
+
 ## Профили совместимости
 
 Показать встроенные профили:

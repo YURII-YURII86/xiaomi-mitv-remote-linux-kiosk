@@ -117,6 +117,31 @@ xiaomi-mitv-remote-lab
 
 Profiles live in `profiles/*.profile.json`. The project is Xiaomi/MiTV-first, but generic Bluetooth HID remotes can be validated through capture mode and a doctor report. See `docs/compatibility.md`.
 
+## Native bilingual CLI
+
+The recommended entrypoint is the unified CLI:
+
+```bash
+xiaomi-remote help
+xiaomi-remote --lang ru help
+XMR_LANG=ru xiaomi-remote flow
+```
+
+Main subcommands:
+
+```text
+xiaomi-remote setup      # prepare/check a local kiosk project
+xiaomi-remote profiles   # list compatibility profiles
+xiaomi-remote capture    # capture/generate a keymap
+xiaomi-remote lab        # validation lab + hardware report
+xiaomi-remote doctor     # redacted diagnostics report
+xiaomi-remote daemon     # run input daemon
+xiaomi-remote status     # export status
+xiaomi-remote flow       # recommended setup flow
+```
+
+The older `xiaomi-mitv-remote-*` commands remain available for backward compatibility.
+
 ## Setup wizard
 
 Prepare a local project folder and print the exact next commands:
