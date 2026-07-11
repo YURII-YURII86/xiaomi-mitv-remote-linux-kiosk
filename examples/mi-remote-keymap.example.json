@@ -1,0 +1,19 @@
+{
+  "device": "Xiaomi / Android TV Bluetooth remote",
+  "mac": "AA:BB:CC:DD:EE:FF",
+  "note": "The event path values are examples only. The daemon discovers current /dev/input/eventN nodes at runtime and falls back by key code.",
+  "keys": {
+    "power": {"label": "Power", "code_text": "KEY_POWER", "code": 116, "event": "/dev/input/event0"},
+    "assistant": {"label": "Assistant", "code_text": "KEY_582", "code": 582, "event": "/dev/input/event0"},
+    "up": {"label": "Up", "code_text": "KEY_UP", "code": 103, "event": "/dev/input/event0"},
+    "left": {"label": "Left", "code_text": "KEY_LEFT", "code": 105, "event": "/dev/input/event0"},
+    "right": {"label": "Right", "code_text": "KEY_RIGHT", "code": 106, "event": "/dev/input/event0"},
+    "down": {"label": "Down", "code_text": "KEY_DOWN", "code": 108, "event": "/dev/input/event0"},
+    "center": {"label": "OK", "code_text": "KEY_SELECT", "code": 353, "event": "/dev/input/event0"},
+    "menu": {"label": "Menu", "code_text": "KEY_MENU or vendor key", "code": 580, "event": "/dev/input/event0"},
+    "back": {"label": "Back", "code_text": "KEY_BACK", "code": 158, "event": "/dev/input/event0"},
+    "home": {"label": "Home", "code_text": "KEY_HOMEPAGE", "code": 172, "event": "/dev/input/event0"},
+    "volume_up": {"label": "Volume +", "code_text": "KEY_VOLUMEUP", "code": 115, "event": "/dev/input/event0"},
+    "volume_down": {"label": "Volume -", "code_text": "KEY_VOLUMEDOWN", "code": 114, "event": "/dev/input/event0"}
+  }
+}

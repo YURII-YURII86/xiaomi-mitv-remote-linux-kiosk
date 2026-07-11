@@ -1,0 +1,19 @@
+[project]
+name = "xiaomi-mitv-remote-linux-kiosk"
+version = "0.1.0"
+description = "Xiaomi/MiTV Bluetooth remote SDK for Linux kiosks"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Linux Kiosk Remote contributors"}]
+keywords = ["xiaomi", "mitv", "android-tv", "linux", "kiosk", "bluetooth", "remote", "input", "evdev"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+]
+dependencies = []
+
+[project.scripts]
+xiaomi-mitv-remote-input = "linux_kiosk_remote.input_daemon:main"
+xiaomi-mitv-remote-status = "linux_kiosk_remote.status_exporter:main"

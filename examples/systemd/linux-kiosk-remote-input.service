@@ -1,0 +1,21 @@
+[Unit]
+Description=Xiaomi/MiTV Bluetooth remote input bridge for Linux kiosks
+After=bluetooth.service
+Wants=bluetooth.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/linux-kiosk-remote
+Environment=LKR_ROOT=/opt/linux-kiosk-remote
+Environment=LKR_REMOTE_MAC=AA:BB:CC:DD:EE:FF
+Environment=LKR_DEVICE_NAME_REGEX=xiaomi|mi rc|android.*remote|remote
+Environment=LKR_EVENT_HOST=127.0.0.1
+Environment=LKR_EVENT_PORT=8793
+Environment=LKR_GRAB=1
+ExecStart=/opt/linux-kiosk-remote/.venv/bin/xiaomi-mitv-remote-input
+Restart=always
+RestartSec=2
+User=root
+
+[Install]
+WantedBy=multi-user.target

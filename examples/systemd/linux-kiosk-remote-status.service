@@ -1,0 +1,16 @@
+[Unit]
+Description=Xiaomi/MiTV Bluetooth remote status exporter for Linux kiosks
+After=bluetooth.service linux-kiosk-remote-input.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/linux-kiosk-remote
+Environment=LKR_ROOT=/opt/linux-kiosk-remote
+Environment=LKR_REMOTE_MAC=AA:BB:CC:DD:EE:FF
+ExecStart=/opt/linux-kiosk-remote/.venv/bin/xiaomi-mitv-remote-status --loop --interval 5
+Restart=always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target
