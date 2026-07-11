@@ -213,6 +213,7 @@ data/remote-status.js
 
 ## Documentation
 
+- `docs/README.ru.md` — full Russian README.
 - `docs/api.md` — JS/JSON/HTTP contracts.
 - `docs/troubleshooting.md` — common Bluetooth/HID/kiosk issues.
 - `docs/security.md` — local security model and root/input access notes.
