@@ -25,3 +25,13 @@ PY
 PYTHONPATH=src LKR_ROOT=/tmp/xiaomi-mitv-remote-smoke python3 -m linux_kiosk_remote.setup_wizard --root /tmp/xiaomi-mitv-remote-smoke --mac AA:BB:CC:DD:EE:FF --init-keymap --dry-run >/tmp/xiaomi-mitv-remote-smoke/setup.log
 grep -q 'Suggested .env' /tmp/xiaomi-mitv-remote-smoke/setup.log
 echo 'setup helper ok'
+
+PYTHONPATH=src LKR_ROOT=/tmp/xiaomi-mitv-remote-smoke LKR_KEYMAP=/tmp/xiaomi-mitv-remote-smoke/keymap.json python3 -m linux_kiosk_remote.doctor --output /tmp/xiaomi-mitv-remote-smoke/doctor.json
+python3 - <<'PY'
+import json
+data=json.load(open('/tmp/xiaomi-mitv-remote-smoke/doctor.json'))
+assert data['schema'] == 'xiaomi-mitv-remote-linux-kiosk.doctor.v1'
+assert 'recommendations' in data
+assert data['keymap']['ok'] is True
+print('doctor ok')
+PY

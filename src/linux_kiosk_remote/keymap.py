@@ -60,3 +60,38 @@ def build_keymap_from_codes(codes: dict[str, int], *, device: str = "Xiaomi / Mi
 def write_keymap(path: Path, keymap: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(keymap, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+VALID_ACTIONS = {action for action, _label in DEFAULT_ACTION_SEQUENCE} | {"power", "mute", "play_pause", "voice", "assistant"}
+
+
+def validate_keymap(data: dict) -> dict:
+    if not isinstance(data, dict):
+        raise ValueError("keymap must be a JSON object")
+    keys = data.get("keys")
+    if not isinstance(keys, dict) or not keys:
+        raise ValueError("keymap.keys must be a non-empty object")
+    seen_codes: dict[int, str] = {}
+    warnings: list[str] = []
+    for action, item in keys.items():
+        if not isinstance(action, str) or not action:
+            raise ValueError("keymap action names must be non-empty strings")
+        if action not in VALID_ACTIONS:
+            warnings.append(f"unknown action name: {action}")
+        if not isinstance(item, dict):
+            raise ValueError(f"keys.{action} must be an object")
+        if "code" not in item:
+            raise ValueError(f"keys.{action}.code is required")
+        code = int(item["code"])
+        if code < 0 or code > 4096:
+            raise ValueError(f"keys.{action}.code is outside expected Linux EV_KEY range: {code}")
+        if code in seen_codes:
+            warnings.append(f"code {code} is mapped to both {seen_codes[code]} and {action}")
+        seen_codes[code] = action
+        if "event" in item and item["event"] not in (None, "auto") and not str(item["event"]).startswith("/dev/input/event"):
+            warnings.append(f"keys.{action}.event is not /dev/input/eventN or auto: {item['event']}")
+    recommended = {"up", "down", "left", "right", "center", "back"}
+    missing = sorted(recommended - set(keys))
+    if missing:
+        warnings.append("missing recommended actions: " + ", ".join(missing))
+    return {"actionCount": len(keys), "warnings": warnings, "actions": sorted(keys)}

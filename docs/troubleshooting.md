@@ -71,3 +71,14 @@ Bluetooth discovery is active. That is useful for pairing, but should not be lef
 ```bash
 bluetoothctl scan off
 ```
+
+
+## Generate a safe diagnostics report
+
+Run:
+
+```bash
+LKR_ROOT="$PWD" xiaomi-mitv-remote-doctor --output remote-doctor.json
+```
+
+The report is redacted by default and is the preferred first artifact for bug reports and hardware validation notes. Review it before sharing if you used `--include-journal`.

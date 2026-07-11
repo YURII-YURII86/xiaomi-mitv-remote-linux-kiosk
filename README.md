@@ -168,12 +168,23 @@ pollRemote();
 
 See `examples/static-html-kiosk/index.html` for a tiny browser demo.
 
+## Doctor / safe diagnostics
+
+Generate a redacted diagnostics report for issues, hardware validation, or kiosk handoff without mutating the device:
+
+```bash
+LKR_ROOT="$PWD" LKR_REMOTE_MAC="AA:BB:CC:DD:EE:FF" xiaomi-mitv-remote-doctor --output remote-doctor.json
+```
+
+The report includes environment facts, keymap validation, Bluetooth controller/device status, matching input events, daemon state, and recommendations. By default it redacts MAC addresses, hostnames, and local paths. Use `--include-journal` only when you are ready to review the redacted Bluetooth journal excerpt before sharing it.
+
 ## Status exporter
 
 Run once:
 
 ```bash
 LKR_ROOT="$PWD" LKR_REMOTE_MAC="AA:BB:CC:DD:EE:FF" xiaomi-mitv-remote-status
+xiaomi-mitv-remote-doctor
 ```
 
 Run as a loop:

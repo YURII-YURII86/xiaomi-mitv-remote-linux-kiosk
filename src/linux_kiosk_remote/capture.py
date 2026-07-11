@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 
 from .common import RemoteConfig, parse_input_devices
-from .keymap import DEFAULT_ACTION_SEQUENCE, build_keymap_from_codes, write_keymap
+from .keymap import DEFAULT_ACTION_SEQUENCE, build_keymap_from_codes, validate_keymap, write_keymap
 
 EV_KEY = 1
 INPUT_EVENT_FMT = "llHHI"
@@ -77,8 +77,9 @@ def main() -> int:
     if args.from_codes_json:
         codes = {str(k): int(v) for k, v in json.loads(args.from_codes_json).items()}
         keymap = build_keymap_from_codes(codes, mac=config.remote_mac)
+        result = validate_keymap(keymap)
         write_keymap(output, keymap)
-        print(f"wrote {output}")
+        print(f"wrote {output} actions={result['actionCount']} warnings={len(result['warnings'])}")
         return 0
 
     action_labels = DEFAULT_ACTION_SEQUENCE
@@ -114,8 +115,9 @@ def main() -> int:
         print("No keys captured; not writing keymap.", file=sys.stderr)
         return 3
     keymap = build_keymap_from_codes(codes, mac=config.remote_mac)
+    result = validate_keymap(keymap)
     write_keymap(output, keymap)
-    print(f"wrote {output}")
+    print(f"wrote {output} actions={result['actionCount']} warnings={len(result['warnings'])}")
     return 0
 
 

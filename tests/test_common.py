@@ -1,7 +1,7 @@
 import unittest
 
 from linux_kiosk_remote.common import parse_bluetooth_info, parse_controller, parse_input_devices
-from linux_kiosk_remote.keymap import build_keymap_from_codes
+from linux_kiosk_remote.keymap import build_keymap_from_codes, validate_keymap
 
 
 class CommonParserTests(unittest.TestCase):
@@ -54,6 +54,17 @@ Discovering: no
         self.assertEqual(keymap["keys"]["up"]["code_text"], "KEY_UP")
         self.assertEqual(keymap["keys"]["center"]["code_text"], "KEY_SELECT")
         self.assertNotIn("down", keymap["keys"])
+
+    def test_validate_keymap(self):
+        keymap = build_keymap_from_codes({"up": 103, "down": 108, "left": 105, "right": 106, "center": 353, "back": 158})
+        result = validate_keymap(keymap)
+        self.assertEqual(result["actionCount"], 6)
+        self.assertEqual(result["warnings"], [])
+
+    def test_validate_keymap_warns_missing_recommended(self):
+        keymap = build_keymap_from_codes({"up": 103})
+        result = validate_keymap(keymap)
+        self.assertTrue(any("missing recommended" in item for item in result["warnings"]))
 
 
 if __name__ == "__main__":
