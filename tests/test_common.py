@@ -3,6 +3,8 @@ import unittest
 from linux_kiosk_remote.common import parse_bluetooth_info, parse_controller, parse_input_devices
 from linux_kiosk_remote.keymap import build_keymap_from_codes, validate_keymap
 from linux_kiosk_remote.profiles import load_profiles, validate_profile
+from linux_kiosk_remote.lab import build_lab_report, parse_codes_json
+from linux_kiosk_remote.common import RemoteConfig
 
 
 class CommonParserTests(unittest.TestCase):
@@ -75,6 +77,16 @@ Discovering: no
         self.assertIn("generic-bluetooth-hid-remote", ids)
         for profile in profiles:
             self.assertIn("status", validate_profile(profile))
+
+    def test_lab_report_from_codes(self):
+        config = RemoteConfig.from_env()
+        report = build_lab_report(config, codes={"up": 103, "down": 108, "left": 105, "right": 106, "center": 353, "back": 158})
+        self.assertEqual(report["schema"], "xiaomi-mitv-remote-linux-kiosk.lab-report.v1")
+        self.assertIn("capturedRecommendedActions", report["checks"])
+        self.assertEqual(set(report["capturedActions"]), {"up", "down", "left", "right", "center", "back"})
+
+    def test_parse_codes_json(self):
+        self.assertEqual(parse_codes_json('{"up":103}'), {"up": 103})
 
 
 if __name__ == "__main__":

@@ -112,6 +112,7 @@ List built-in compatibility profiles:
 
 ```bash
 xiaomi-mitv-remote-profiles
+xiaomi-mitv-remote-lab
 ```
 
 Profiles live in `profiles/*.profile.json`. The project is Xiaomi/MiTV-first, but generic Bluetooth HID remotes can be validated through capture mode and a doctor report. See `docs/compatibility.md`.
@@ -177,6 +178,25 @@ pollRemote();
 ```
 
 See `examples/static-html-kiosk/index.html` for a tiny browser demo. For stack integration, see `examples/integration/linux-tv-kiosk-shell/`.
+
+## Validation lab
+
+Run a guided validation report without mutating the device:
+
+```bash
+LKR_ROOT="$PWD" LKR_GRAB=0 xiaomi-mitv-remote-lab --output hardware-validation-report.json
+```
+
+Generate a report and keymap from known Linux key codes, useful for CI or manual conversion:
+
+```bash
+xiaomi-mitv-remote-lab \
+  --from-codes-json '{"up":103,"down":108,"left":105,"right":106,"center":353,"back":158}' \
+  --output hardware-validation-report.json \
+  --write-keymap data/mi-remote-keymap.json
+```
+
+For real hardware capture, use `--capture` explicitly. The lab writes a machine-readable `hardware-validation-report.json` with checks for Bluetooth, input events, keymap, captured recommended actions, and whether it is safe to claim hardware verification.
 
 ## Doctor / safe diagnostics
 

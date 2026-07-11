@@ -82,3 +82,14 @@ LKR_ROOT="$PWD" xiaomi-mitv-remote-doctor --output remote-doctor.json
 ```
 
 The report is redacted by default and is the preferred first artifact for bug reports and hardware validation notes. Review it before sharing if you used `--include-journal`.
+
+
+## Run the validation lab
+
+For a full machine-readable validation artifact, run:
+
+```bash
+LKR_ROOT="$PWD" LKR_GRAB=0 xiaomi-mitv-remote-lab --output hardware-validation-report.json
+```
+
+Use `--capture` only when a real remote is paired and awake. Use `--write-keymap` only when you want the lab to write a generated keymap.

@@ -265,6 +265,16 @@ pollRemote();
 examples/static-html-kiosk/index.html
 ```
 
+## Validation lab
+
+Команда `xiaomi-mitv-remote-lab` создаёт machine-readable отчёт проверки пульта и хоста:
+
+```bash
+LKR_ROOT="$PWD" LKR_GRAB=0 xiaomi-mitv-remote-lab --output hardware-validation-report.json
+```
+
+По умолчанию она не пишет keymap и не мутирует устройство. Для реального захвата кнопок нужно явно указать `--capture`, а для записи keymap — `--write-keymap`.
+
 ## Status exporter
 
 Разовый запуск:

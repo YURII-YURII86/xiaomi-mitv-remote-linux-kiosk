@@ -21,6 +21,7 @@ xiaomi-mitv-remote-capture = "linux_kiosk_remote.capture:main"
 xiaomi-mitv-remote-setup = "linux_kiosk_remote.setup_wizard:main"
 xiaomi-mitv-remote-doctor = "linux_kiosk_remote.doctor:main"
 xiaomi-mitv-remote-profiles = "linux_kiosk_remote.profiles:main"
+xiaomi-mitv-remote-lab = "linux_kiosk_remote.lab:main"
 
 [project.urls]
 Homepage = "https://github.com/YURII-YURII86/xiaomi-mitv-remote-linux-kiosk"

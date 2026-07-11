@@ -45,3 +45,15 @@ assert 'xiaomi-mitv-remote' in ids
 assert 'generic-bluetooth-hid-remote' in ids
 print('profiles ok')
 PY
+
+PYTHONPATH=src LKR_ROOT=/tmp/xiaomi-mitv-remote-smoke LKR_KEYMAP=/tmp/xiaomi-mitv-remote-smoke/keymap.json LKR_GRAB=0 python3 -m linux_kiosk_remote.lab --from-codes-json '{"up":103,"down":108,"left":105,"right":106,"center":353,"back":158}' --output /tmp/xiaomi-mitv-remote-smoke/lab-report.json --write-keymap /tmp/xiaomi-mitv-remote-smoke/lab-keymap.json
+python3 - <<'PY'
+import json
+report=json.load(open('/tmp/xiaomi-mitv-remote-smoke/lab-report.json'))
+assert report['schema'] == 'xiaomi-mitv-remote-linux-kiosk.lab-report.v1'
+assert set(report['capturedActions']) >= {'up','down','left','right','center','back'}
+assert report['checks']['capturedRecommendedActions']['ok'] is True
+keymap=json.load(open('/tmp/xiaomi-mitv-remote-smoke/lab-keymap.json'))
+assert keymap['keys']['up']['code'] == 103
+print('lab ok')
+PY
