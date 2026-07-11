@@ -9,3 +9,8 @@ data/remote-status.js
 data/remote-status.json
 data/remote-daemon-state.json
 data/*debug*.jsonl
+
+# Local agent/project memory, not part of the public package
+.ai_context/
+AGENTS.md
+CLAUDE.md
