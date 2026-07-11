@@ -2,6 +2,7 @@ import unittest
 
 from linux_kiosk_remote.common import parse_bluetooth_info, parse_controller, parse_input_devices
 from linux_kiosk_remote.keymap import build_keymap_from_codes, validate_keymap
+from linux_kiosk_remote.profiles import load_profiles, validate_profile
 
 
 class CommonParserTests(unittest.TestCase):
@@ -65,6 +66,15 @@ Discovering: no
         keymap = build_keymap_from_codes({"up": 103})
         result = validate_keymap(keymap)
         self.assertTrue(any("missing recommended" in item for item in result["warnings"]))
+
+    def test_profiles_validate(self):
+        profiles = load_profiles()
+        self.assertGreaterEqual(len(profiles), 2)
+        ids = {p["id"] for p in profiles}
+        self.assertIn("xiaomi-mitv-remote", ids)
+        self.assertIn("generic-bluetooth-hid-remote", ids)
+        for profile in profiles:
+            self.assertIn("status", validate_profile(profile))
 
 
 if __name__ == "__main__":

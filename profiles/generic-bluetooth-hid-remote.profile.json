@@ -1,0 +1,21 @@
+{
+  "schema": "xiaomi-mitv-remote-linux-kiosk.profile.v1",
+  "id": "generic-bluetooth-hid-remote",
+  "name": "Generic Bluetooth HID Remote",
+  "status": "experimental",
+  "match": {
+    "nameRegex": "remote|hid|keyboard",
+    "uniqMacRecommended": true
+  },
+  "keymap": "generated-by-capture",
+  "notes": [
+    "Use this profile for remotes that expose Linux EV_KEY events but are not Xiaomi/MiTV remotes.",
+    "Run xiaomi-mitv-remote-capture to generate a device-specific keymap.",
+    "Do not claim compatibility until a doctor report and keymap are recorded."
+  ],
+  "validation": {
+    "standaloneHardwareVerified": false,
+    "doctorReportRecommended": true,
+    "firstRunGrab": false
+  }
+}

@@ -1,0 +1,11 @@
+# Example only. Do not copy blindly.
+#
+# Safer non-root input access requires matching your exact remote identity.
+# First collect a redacted report:
+#   xiaomi-mitv-remote-doctor --output remote-doctor.json
+# Then inspect the unredacted local /proc/bus/input/devices and udevadm info output.
+#
+# Generic pattern, intentionally disabled:
+# SUBSYSTEM=="input", GROUP="input", MODE="0660"
+#
+# Prefer a narrow rule for your device once you know vendor/product/name.

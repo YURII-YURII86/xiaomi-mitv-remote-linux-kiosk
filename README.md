@@ -106,6 +106,16 @@ sudo \
 ```
 
 
+## Compatibility profiles
+
+List built-in compatibility profiles:
+
+```bash
+xiaomi-mitv-remote-profiles
+```
+
+Profiles live in `profiles/*.profile.json`. The project is Xiaomi/MiTV-first, but generic Bluetooth HID remotes can be validated through capture mode and a doctor report. See `docs/compatibility.md`.
+
 ## Setup wizard
 
 Prepare a local project folder and print the exact next commands:
@@ -166,7 +176,7 @@ async function pollRemote() {
 pollRemote();
 ```
 
-See `examples/static-html-kiosk/index.html` for a tiny browser demo.
+See `examples/static-html-kiosk/index.html` for a tiny browser demo. For stack integration, see `examples/integration/linux-tv-kiosk-shell/`.
 
 ## Doctor / safe diagnostics
 
@@ -227,6 +237,8 @@ data/remote-status.js
 - `docs/README.ru.md` — full Russian README.
 - `docs/api.md` — JS/JSON/HTTP contracts.
 - `docs/troubleshooting.md` — common Bluetooth/HID/kiosk issues.
+- `docs/compatibility.md` — compatibility profiles and validation notes.
+- `docs/udev-non-root.md` — cautious non-root input permissions guide.
 - `docs/security.md` — local security model and root/input access notes.
 - `docs/hardware-validation.md` — checklist for confirming a real remote.
 

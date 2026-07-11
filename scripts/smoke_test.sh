@@ -35,3 +35,13 @@ assert 'recommendations' in data
 assert data['keymap']['ok'] is True
 print('doctor ok')
 PY
+
+PYTHONPATH=src python3 -m linux_kiosk_remote.profiles --json >/tmp/xiaomi-mitv-remote-smoke/profiles.json
+python3 - <<'PY'
+import json
+profiles=json.load(open('/tmp/xiaomi-mitv-remote-smoke/profiles.json'))
+ids={p['id'] for p in profiles}
+assert 'xiaomi-mitv-remote' in ids
+assert 'generic-bluetooth-hid-remote' in ids
+print('profiles ok')
+PY

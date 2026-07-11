@@ -153,6 +153,16 @@ sudo \
   xiaomi-mitv-remote-input
 ```
 
+## Профили совместимости
+
+Показать встроенные профили:
+
+```bash
+xiaomi-mitv-remote-profiles
+```
+
+Профили лежат в `profiles/*.profile.json`. Проект остаётся Xiaomi/MiTV-first, но другие Bluetooth HID-пульты можно валидировать через capture mode и doctor report. Подробнее: `docs/compatibility.md`.
+
 ## Setup helper
 
 Команда:
@@ -322,6 +332,8 @@ examples/systemd/linux-kiosk-remote-status.service
 
 - `docs/api.md` — контракты JS/JSON/HTTP.
 - `docs/troubleshooting.md` — типовые проблемы Bluetooth/HID/kiosk.
+- `docs/compatibility.md` — профили совместимости и правила валидации.
+- `docs/udev-non-root.md` — осторожный non-root доступ к input devices.
 - `docs/security.md` — security model, root/input access, localhost endpoint.
 - `docs/hardware-validation.md` — чеклист реальной проверки пульта.
 

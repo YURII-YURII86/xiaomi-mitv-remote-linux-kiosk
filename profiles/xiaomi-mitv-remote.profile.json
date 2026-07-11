@@ -1,0 +1,21 @@
+{
+  "schema": "xiaomi-mitv-remote-linux-kiosk.profile.v1",
+  "id": "xiaomi-mitv-remote",
+  "name": "Xiaomi / MiTV Bluetooth Remote",
+  "status": "primary-target",
+  "match": {
+    "nameRegex": "xiaomi|mi rc|android.*remote|remote",
+    "uniqMacRecommended": true
+  },
+  "keymap": "examples/mi-remote-keymap.example.json",
+  "notes": [
+    "This is the primary target family for the project name and examples.",
+    "Actual Linux key codes can vary by remote revision and host stack; use capture mode when in doubt.",
+    "Event paths are discovered at runtime and should not be hardcoded."
+  ],
+  "validation": {
+    "standaloneHardwareVerified": false,
+    "doctorReportRecommended": true,
+    "firstRunGrab": false
+  }
+}
