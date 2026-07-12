@@ -204,6 +204,20 @@ pollRemote();
 
 See `examples/static-html-kiosk/index.html` for a tiny browser demo. For stack integration, see `examples/integration/linux-tv-kiosk-shell/`.
 
+## Hardware validation submission
+
+Prepare a redacted maintainer-review package from a lab report:
+
+```bash
+LKR_GRAB=0 xiaomi-remote lab --output hardware-validation-report.json
+xiaomi-remote submit hardware-validation-report.json --output hardware-submission.json --markdown hardware-submission.md
+xiaomi-remote submit hardware-validation-report.json \
+  --output hardware-submission.json \
+  --markdown hardware-submission.md
+```
+
+The helper validates required checks/actions and redacts private markers before GitHub issue/PR submission. See `docs/hardware-submission.md`.
+
 ## Validation lab
 
 Run a guided validation report without mutating the device:

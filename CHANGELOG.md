@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.8 - 2026-07-12
+
+- Added `xiaomi-remote submit` / `xiaomi-mitv-remote-submit` for hardware lab report validation and anonymized maintainer submissions.
+- Added hardware submission JSON/Markdown examples.
+- Added hardware validation GitHub issue template.
+- Added docs for safe report submission without leaking MACs, hostnames, private paths, or tokens.
+- Wired submission validation into smoke and repository quality gates.
+
 ## 0.2.7 - 2026-07-11
 
 - Fixed `scripts/repo_quality_gate.sh` to work on Python 3.10 by avoiding `tomllib`.

@@ -70,3 +70,14 @@ Important fields:
 - Lab report summary.
 
 Example redacted report: `examples/reports/hardware-validation-report.example.json`.
+
+
+## Submission flow
+
+After generating `hardware-validation-report.json`, run:
+
+```bash
+xiaomi-remote submit hardware-validation-report.json --output hardware-submission.json --markdown hardware-submission.md
+```
+
+Attach the redacted submission files to GitHub. See `docs/hardware-submission.md`.

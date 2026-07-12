@@ -1,0 +1,42 @@
+name: Hardware validation report
+description: Submit a redacted Xiaomi/MiTV remote validation report
+labels: [hardware-validation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for validating a remote. Please run:
+
+        ```bash
+        LKR_GRAB=0 xiaomi-remote lab --output hardware-validation-report.json
+        xiaomi-remote submit hardware-validation-report.json --output hardware-submission.json --markdown hardware-submission.md
+        ```
+
+        Attach only the redacted submission files. Do not paste real MAC addresses, hostnames, private paths, or tokens.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary from hardware-submission.md
+      description: Paste the generated markdown summary.
+      placeholder: "Ready for maintainer review: ..."
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Attached files
+      description: Confirm that you attached hardware-submission.json and hardware-submission.md.
+      placeholder: "Attached: hardware-submission.json, hardware-submission.md"
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I used LKR_GRAB=0 for first validation.
+          required: true
+        - label: I did not include raw logs with real MAC addresses, hostnames, private paths, or tokens.
+          required: true
+        - label: I understand this report may not be accepted as hardware-verified if required checks/actions are missing.
+          required: true

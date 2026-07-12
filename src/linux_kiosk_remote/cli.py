@@ -23,6 +23,7 @@ TEXT = {
         "cmd_doctor": "Create a redacted diagnostics report.",
         "cmd_daemon": "Run the input daemon.",
         "cmd_status": "Export Bluetooth/input/daemon status.",
+        "cmd_submit": "Validate/anonymize hardware lab report for maintainer review.",
         "cmd_flow": "Print the recommended setup flow.",
         "flow_title": "Recommended Xiaomi/MiTV remote setup flow",
         "flow_steps": [
@@ -31,8 +32,9 @@ TEXT = {
             "3. Run: xiaomi-remote profiles",
             "4. Capture real buttons: xiaomi-remote capture --output data/mi-remote-keymap.json",
             "5. Validate: LKR_GRAB=0 xiaomi-remote lab --output hardware-validation-report.json",
-            "6. Run daemon in observe mode first: LKR_GRAB=0 xiaomi-remote daemon",
-            "7. Switch to LKR_GRAB=1 only after browser/app integration is confirmed.",
+            "6. Prepare submission: xiaomi-remote submit hardware-validation-report.json --output hardware-submission.json --markdown hardware-submission.md",
+            "7. Run daemon in observe mode first: LKR_GRAB=0 xiaomi-remote daemon",
+            "8. Switch to LKR_GRAB=1 only after browser/app integration is confirmed.",
         ],
         "safety": "Safety: no production kiosk mutation is done by setup/doctor/profiles/flow. Capture/lab write files only when output flags are explicitly passed.",
     },
@@ -47,6 +49,7 @@ TEXT = {
         "cmd_doctor": "Создать безопасный redacted diagnostics report.",
         "cmd_daemon": "Запустить input daemon.",
         "cmd_status": "Экспортировать статус Bluetooth/input/daemon.",
+        "cmd_submit": "Проверить/обезличить hardware lab report для review.",
         "cmd_flow": "Показать рекомендуемый путь настройки.",
         "flow_title": "Рекомендуемый путь настройки Xiaomi/MiTV пульта",
         "flow_steps": [
@@ -55,8 +58,9 @@ TEXT = {
             "3. Запусти: xiaomi-remote profiles",
             "4. Поймай реальные кнопки: xiaomi-remote capture --output data/mi-remote-keymap.json",
             "5. Проверь: LKR_GRAB=0 xiaomi-remote lab --output hardware-validation-report.json",
-            "6. Сначала daemon в observe mode: LKR_GRAB=0 xiaomi-remote daemon",
-            "7. Включай LKR_GRAB=1 только после проверки browser/app integration.",
+            "6. Подготовь submission: xiaomi-remote submit hardware-validation-report.json --output hardware-submission.json --markdown hardware-submission.md",
+            "7. Сначала daemon в observe mode: LKR_GRAB=0 xiaomi-remote daemon",
+            "8. Включай LKR_GRAB=1 только после проверки browser/app integration.",
         ],
         "safety": "Безопасность: setup/doctor/profiles/flow не мутируют production kiosk. Capture/lab пишут файлы только когда явно переданы output-флаги.",
     },
@@ -70,6 +74,7 @@ COMMANDS: dict[str, tuple[str, str]] = {
     "doctor": ("linux_kiosk_remote.doctor", "main"),
     "daemon": ("linux_kiosk_remote.input_daemon", "main"),
     "status": ("linux_kiosk_remote.status_exporter", "main"),
+    "submit": ("linux_kiosk_remote.submission", "main"),
 }
 
 ALIASES = {
@@ -119,7 +124,7 @@ def build_parser(lang: str) -> argparse.ArgumentParser:
     parser.add_argument("--lang", choices=sorted(LANGS), default=lang, help="UI language / язык интерфейса")
     parser.add_argument("--version", action="version", version=f"xiaomi-remote {__version__}")
     sub = parser.add_subparsers(dest="command")
-    for name in ["help", "flow", "setup", "profiles", "capture", "lab", "doctor", "daemon", "status"]:
+    for name in ["help", "flow", "setup", "profiles", "capture", "lab", "submit", "doctor", "daemon", "status"]:
         if name in {"help", "flow"}:
             sub.add_parser(name, help=t[f"cmd_{name}"])
         else:

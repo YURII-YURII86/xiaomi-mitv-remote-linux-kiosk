@@ -1,0 +1,68 @@
+{
+  "schema": "xiaomi-mitv-remote-linux-kiosk.hardware-submission.v1",
+  "readyForMaintainerReview": true,
+  "safeToClaimHardwareVerified": true,
+  "profileId": "xiaomi-mitv-remote",
+  "mode": "hardware-validation",
+  "capturedActions": [
+    "back",
+    "center",
+    "down",
+    "left",
+    "right",
+    "up"
+  ],
+  "failedChecks": [],
+  "validationErrors": [],
+  "privateFindings": [],
+  "redactedReport": {
+    "schema": "xiaomi-mitv-remote-linux-kiosk.lab-report.v1",
+    "createdAt": "2026-07-11T12:00:00",
+    "profileId": "xiaomi-mitv-remote",
+    "mode": "hardware-validation",
+    "checks": {
+      "bluetoothctlAvailable": {
+        "ok": true,
+        "message": "bluetoothctl found"
+      },
+      "profileKnown": {
+        "ok": true,
+        "message": "profile found"
+      },
+      "keymapValid": {
+        "ok": true,
+        "message": "configured keymap valid"
+      },
+      "paired": {
+        "ok": true,
+        "message": "remote paired/bonded"
+      },
+      "connected": {
+        "ok": true,
+        "message": "remote connected"
+      },
+      "inputEvent": {
+        "ok": true,
+        "message": "matching input event found"
+      },
+      "capturedRecommendedActions": {
+        "ok": true,
+        "message": "recommended actions captured"
+      },
+      "firstRunGrabSafe": {
+        "ok": true,
+        "message": "LKR_GRAB=0 for first validation"
+      }
+    },
+    "capturedActions": [
+      "back",
+      "center",
+      "down",
+      "left",
+      "right",
+      "up"
+    ],
+    "safeToClaimHardwareVerified": true,
+    "recommendations": []
+  }
+}

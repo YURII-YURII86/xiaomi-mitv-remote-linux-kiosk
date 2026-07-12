@@ -73,3 +73,14 @@ report=json.load(open('/tmp/xiaomi-mitv-remote-smoke/cli-lab-report.json'))
 assert report['schema'] == 'xiaomi-mitv-remote-linux-kiosk.lab-report.v1'
 print('unified cli ok')
 PY
+
+PYTHONPATH=src python3 -m linux_kiosk_remote.submission examples/reports/hardware-validation-report.example.json --output /tmp/xiaomi-hardware-submission.json --markdown /tmp/xiaomi-hardware-submission.md --strict
+python3 - <<'PY2'
+import json
+sub=json.load(open('/tmp/xiaomi-hardware-submission.json'))
+assert sub['schema'] == 'xiaomi-mitv-remote-linux-kiosk.hardware-submission.v1'
+assert sub['readyForMaintainerReview'] is True
+assert sub['privateFindings'] == []
+assert 'Hardware validation submission' in open('/tmp/xiaomi-hardware-submission.md').read()
+print('hardware submission ok')
+PY2

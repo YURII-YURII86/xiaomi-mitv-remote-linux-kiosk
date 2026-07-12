@@ -9,7 +9,7 @@ fail() {
   exit 1
 }
 
-printf '\n[1/9] git/publication cleanliness\n'
+printf '\n[1/10] git/publication cleanliness\n'
 tracked_bad="$(git ls-files | grep -E '(^|/)(__pycache__|\.ai_context|AGENTS\.md|CLAUDE\.md|\.egg-info|data/remote-action\.js|data/remote-status\.(js|json)|data/remote-daemon-state\.json|debug.*\.jsonl)' || true)"
 if [[ -n "$tracked_bad" ]]; then
   printf '%s\n' "$tracked_bad"
@@ -17,7 +17,7 @@ if [[ -n "$tracked_bad" ]]; then
 fi
 printf 'ok\n'
 
-printf '\n[2/9] version consistency\n'
+printf '\n[2/10] version consistency\n'
 python3 - <<'PY'
 import re
 from pathlib import Path
@@ -34,7 +34,7 @@ assert f'## {project_version}' in changelog or f'## [{project_version}]' in chan
 print('ok', project_version)
 PY
 
-printf '\n[3/9] entry points import\n'
+printf '\n[3/10] entry points import\n'
 PYTHONPATH=src python3 - <<'PY'
 import importlib
 import re
@@ -56,10 +56,10 @@ for name, target in scripts.items():
 print('ok', len(scripts))
 PY
 
-printf '\n[4/9] smoke test\n'
+printf '\n[4/10] smoke test\n'
 ./scripts/smoke_test.sh
 
-printf '\n[5/9] native CLI language smoke\n'
+printf '\n[5/10] native CLI language smoke\n'
 PYTHONPATH=src python3 -m linux_kiosk_remote.cli --version | grep -q '0.2.'
 PYTHONPATH=src python3 -m linux_kiosk_remote.cli --lang ru help >/tmp/xiaomi-quality-ru-help.txt
 grep -q 'Нативный CLI' /tmp/xiaomi-quality-ru-help.txt
@@ -67,7 +67,7 @@ XMR_LANG=ru PYTHONPATH=src python3 -m linux_kiosk_remote.cli flow >/tmp/xiaomi-q
 grep -q 'Рекомендуемый путь' /tmp/xiaomi-quality-ru-flow.txt
 printf 'ok\n'
 
-printf '\n[6/9] README/docs required sections\n'
+printf '\n[6/10] README/docs required sections\n'
 python3 - <<'PY'
 from pathlib import Path
 readme=Path('README.md').read_text()
@@ -79,16 +79,30 @@ required = [
     'Quick start',
     'Current verification status',
     'Part of Linux Kiosk Stack',
+    'Hardware validation submission',
 ]
 missing=[item for item in required if item not in readme]
 assert not missing, missing
 ru=Path('docs/README.ru.md').read_text()
-for marker in ['Нативный двуязычный CLI','Validation lab','Профили совместимости']:
+for marker in ['Нативный двуязычный CLI','Validation lab','Профили совместимости','Hardware validation submission']:
     assert marker in ru, marker
 print('ok')
 PY
 
-printf '\n[7/9] local markdown links\n'
+printf '\n[7/10] hardware submission flow\n'
+PYTHONPATH=src python3 -m linux_kiosk_remote.submission examples/reports/hardware-validation-report.example.json --output /tmp/xiaomi-quality-submission.json --markdown /tmp/xiaomi-quality-submission.md --strict
+python3 - <<'PY'
+import json
+sub=json.load(open('/tmp/xiaomi-quality-submission.json'))
+assert sub['schema'] == 'xiaomi-mitv-remote-linux-kiosk.hardware-submission.v1'
+assert sub['readyForMaintainerReview'] is True
+assert sub['safeToClaimHardwareVerified'] is True
+assert sub['privateFindings'] == []
+assert 'Hardware validation submission' in open('/tmp/xiaomi-quality-submission.md').read()
+print('ok')
+PY
+
+printf '\n[8/10] local markdown links\n'
 python3 - <<'PY'
 from pathlib import Path
 import re
@@ -113,7 +127,7 @@ if errors:
 print('ok')
 PY
 
-printf '\n[8/9] public privacy scan\n'
+printf '\n[9/10] public privacy scan\n'
 python3 - <<'PY'
 from pathlib import Path
 needles = [
@@ -143,7 +157,7 @@ if hits:
 print('ok')
 PY
 
-printf '\n[9/9] profile/report examples parse\n'
+printf '\n[10/10] profile/report examples parse\n'
 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -152,6 +166,9 @@ for p in Path('profiles').glob('*.json'):
     assert data['schema'] == 'xiaomi-mitv-remote-linux-kiosk.profile.v1'
 report=json.loads(Path('examples/reports/hardware-validation-report.example.json').read_text())
 assert report['schema'] == 'xiaomi-mitv-remote-linux-kiosk.lab-report.v1'
+submission=json.loads(Path('examples/reports/hardware-submission.example.json').read_text())
+assert submission['schema'] == 'xiaomi-mitv-remote-linux-kiosk.hardware-submission.v1'
+assert submission['readyForMaintainerReview'] is True
 print('ok')
 PY
 

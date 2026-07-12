@@ -440,3 +440,17 @@ CI на GitHub прогоняет smoke test на Python 3.10, 3.11 и 3.12.
 ## Лицензия
 
 MIT.
+
+
+## Hardware validation submission
+
+Подготовить обезличенный пакет для GitHub issue/PR:
+
+```bash
+LKR_GRAB=0 xiaomi-remote lab --output hardware-validation-report.json
+xiaomi-remote submit hardware-validation-report.json \
+  --output hardware-submission.json \
+  --markdown hardware-submission.md
+```
+
+`submit` проверяет обязательные checks/actions и приватные маркеры после redaction. Сырые логи с MAC/hostname/private paths не прикладывай.
